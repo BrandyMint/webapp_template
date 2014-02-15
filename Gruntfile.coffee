@@ -1,6 +1,6 @@
 "use strict"
 LIVERELOAD_PORT = 35729
-SERVER_PORT = 9000
+SERVER_PORT = 3000
 lrSnippet = require("connect-livereload")(port: LIVERELOAD_PORT)
 mountFolder = (connect, dir) ->
   connect.static require("path").resolve(dir)
@@ -20,6 +20,7 @@ module.exports = (grunt) ->
   # load all grunt tasks
   require("load-grunt-tasks") grunt
   grunt.loadNpmTasks "grunt-haml"
+  grunt.loadNpmTasks "grunt-autoprefixer"
   
   # configurable paths
   yeomanConfig =
@@ -28,6 +29,13 @@ module.exports = (grunt) ->
 
   grunt.initConfig
     yeoman: yeomanConfig
+    autoprefixer:
+      options:
+        browsers: ['last 2 version']
+        map: true
+      dist:
+        src: [".tmp/styles/{,*/}*.css"]
+
     watch:
       options:
         nospawn: true
@@ -47,7 +55,7 @@ module.exports = (grunt) ->
 
       compass:
         files: ["<%= yeoman.app %>/styles/{,*/}*.{scss,sass}"]
-        tasks: ["compass"]
+        tasks: ["compass", "autoprefixer"]
 
       livereload:
         options:
@@ -310,7 +318,7 @@ module.exports = (grunt) ->
     if target is "dist"
       return grunt.task.run([
         "build"
-        "open"
+        # "open"
         "connect:dist:keepalive"
       ])
     if target is "test"
@@ -321,6 +329,7 @@ module.exports = (grunt) ->
         "jst"
         "haml"
         "compass:server"
+        "autoprefixer"
         "connect:test"
         "watch:livereload"
       ])
@@ -331,8 +340,9 @@ module.exports = (grunt) ->
       "jst"
       "haml"
       "compass:server"
+      "autoprefixer"
       "connect:livereload"
-      "open"
+      # "open"
       "watch"
     ]
     return
@@ -343,6 +353,7 @@ module.exports = (grunt) ->
     "createDefaultTemplate"
     "jst"
     "compass"
+    "autoprefixer"
     "connect:test"
     "mocha"
     "watch:test"
@@ -354,6 +365,7 @@ module.exports = (grunt) ->
     "jst"
     "haml"
     "compass:dist"
+    "autoprefixer"
     "useminPrepare"
     "requirejs"
     "imagemin"
